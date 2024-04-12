@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { SignupFormValidation } from "@/lib/validation"
 import { z } from "zod"
 import Loader from "@/components/shared/Loader"
+import { Link } from "react-router-dom"
 
 
 
@@ -13,7 +14,7 @@ import Loader from "@/components/shared/Loader"
 
 const SignupForm = () => {
   // Initialize loading to true
-  const isLoading = true;
+  const isLoading = false;
   // Define form.
   const form = useForm<z.infer<typeof SignupFormValidation>>({
     resolver: zodResolver(SignupFormValidation),
@@ -41,7 +42,7 @@ const SignupForm = () => {
           <img src="/assets/images/logo.svg" className="mx-auto" alt="Logo" />
 
           <h2 className="h3-bold md:h2-bold pt-5 sm:pt-12 ">Create a new account</h2>
-          <p className="text-light-3 small-medium md:base-regular">To use TrendVibe enter your details</p>
+          <p className="text-light-3 small-medium md:base-regular">To use TrendVibe, please enter your details</p>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 w-full mt-4">
             <FormField
               control={form.control}
@@ -102,6 +103,10 @@ const SignupForm = () => {
                 </div>
               ): "Sign Up" }
             </Button>
+            <p className="text-small-regular text-light-2 text-center mt-2">
+              Already have an account? 
+              <Link to="/signin" className="text-primary-500 text-small-semibold ml-1">Log in</Link>
+            </p>
           </form>
         </div>
       </Form>
