@@ -1,3 +1,4 @@
+import { useToast } from "@/components/ui/use-toast"
 import { FormControl, Form, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useForm } from "react-hook-form"
@@ -6,40 +7,81 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { SignupFormValidation } from "@/lib/validation"
 import { z } from "zod"
 import Loader from "@/components/shared/Loader"
-import { Link } from "react-router-dom"
-
+import { Link, useNavigate } from "react-router-dom"
+import { useCreateUserAccount, useSignInAccount } from "@/lib/react-query/queriesAndMutations"
+import { useUserContext } from "@/context/AuthContext"
 
 
 
 
 const SignupForm = () => {
-  // Initialize loading to true
-  const isLoading = false;
+  const { toast } = useToast()
+  const navigate = useNavigate();
+  const { checkAuthUser, isLoading: isUserLoading } = useUserContext()
+
+  // Define a mutation.
+  const { mutateAsync: createUserAccount, isPending: isCreatingUserAccount } = useCreateUserAccount();
+
+  const { mutateAsync: signInAccount, isPending: isSignIn } = useSignInAccount();
+
+
+
+
+
   // Define form.
   const form = useForm<z.infer<typeof SignupFormValidation>>({
     resolver: zodResolver(SignupFormValidation),
     defaultValues: {
-      // ✅ This will be validated and type-safe
+      // This will be validated
       name: "",
       username: "",
-      password: "",
       email: "",
+      password: "",
 
     },
   })
 
+
+
   // Define a submit handler.
-  function onSubmit(values: z.infer<typeof SignupFormValidation>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof SignupFormValidation>) {
+    const newUser = await createUserAccount(values);
+
+    if (!newUser) {
+      return toast({
+        title: "Sign up faild!. Please try again"
+      })
+    }
+
+    const session = await signInAccount({
+      email: values.email,
+      password: values.password,
+    })
+    if (!session) {
+      return toast({
+        title: "Sign in faild!. Please try again"
+      })
+    }
+
+    const isLoggedIn = await checkAuthUser();
+
+    if (isLoggedIn) {
+      form.reset();
+
+      navigate("/");
+    } else {
+      return toast({ title: "Sign up faild!. Please try again" })
+    }
   }
+
+
   return (
     <>
       <Form {...form}>
 
         <div className="sm:w-420 flex-center flex-col">
-          <img src="/assets/images/logo.svg" className="mx-auto" alt="Logo" />
+          {/* <img src="/assets/images/logo.svg" className="mx-auto" alt="Logo" /> */}
+          <h1 className="h1-bold md:h2-bold">TrendVibe</h1>
 
           <h2 className="h3-bold md:h2-bold pt-5 sm:pt-12 ">Create a new account</h2>
           <p className="text-light-3 small-medium md:base-regular">To use TrendVibe, please enter your details</p>
@@ -57,7 +99,7 @@ const SignupForm = () => {
                 </FormItem>
               )}
             />
-             <FormField
+            <FormField
               control={form.control}
               name="username"
               render={({ field }) => (
@@ -70,7 +112,7 @@ const SignupForm = () => {
                 </FormItem>
               )}
             />
-             <FormField
+            <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
@@ -83,7 +125,7 @@ const SignupForm = () => {
                 </FormItem>
               )}
             />
-             <FormField
+            <FormField
               control={form.control}
               name="password"
               render={({ field }) => (
@@ -97,14 +139,14 @@ const SignupForm = () => {
               )}
             />
             <Button type="submit" className="shad-button_primary">
-              {isLoading?(
+              {isCreatingUserAccount ? (
                 <div className="flex-center gap-2">
-                 <Loader/> Loading..
+                  <Loader /> Loading..
                 </div>
-              ): "Sign Up" }
+              ) : "Sign Up"}
             </Button>
             <p className="text-small-regular text-light-2 text-center mt-2">
-              Already have an account? 
+              Already have an account?
               <Link to="/signin" className="text-primary-500 text-small-semibold ml-1">Log in</Link>
             </p>
           </form>
@@ -114,4 +156,4 @@ const SignupForm = () => {
   )
 }
 
-export default SignupForm
+export default SignupForm;
