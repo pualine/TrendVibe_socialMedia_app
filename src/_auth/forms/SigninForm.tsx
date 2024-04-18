@@ -20,14 +20,7 @@ const SigninForm  = () => {
   const { checkAuthUser, isLoading: isUserLoading } = useUserContext()
 
   // Define a mutation.
-
-
   const { mutateAsync: signInAccount} = useSignInAccount();
-
-
-
-
-
   // Define form.
   const form = useForm<z.infer<typeof SigninFormValidation>>({
     resolver: zodResolver(SigninFormValidation),
@@ -38,8 +31,6 @@ const SigninForm  = () => {
 
     },
   })
-
-
 
   // Define a submit handler.
   async function onSubmit(values: z.infer<typeof SigninFormValidation>) {
@@ -71,9 +62,9 @@ const SigninForm  = () => {
 
         <div className="sm:w-420 flex-center flex-col">
           {/* <img src="/assets/images/logo.svg" className="mx-auto" alt="Logo" /> */}
-          <h1 className="h1-bold md:h2-bold">TrendVibe</h1>
+          <h2 className="h3-bold md:h3-bold">TrendVibe</h2>
 
-          <h2 className="h3-bold md:h2-bold pt-5 sm:pt-12 ">Log in to your account</h2>
+          <h2 className="h3-bold md:h2-bold pt-5 sm:pt-12 ">Login to your account</h2>
           <p className="text-light-3 small-medium md:base-regular">Welcome back!. Please enter your details</p>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 w-full mt-4">
             <FormField
@@ -109,9 +100,11 @@ const SigninForm  = () => {
                 </div>
               ) : "Sign In"}
             </Button>
+            <p className="text-light-3 small-medium md:base-regular">Forgot Password?
+            <Link to="/#" className="text-primary-500 text-small-semibold ml-1">Click here</Link></p>
             <p className="text-small-regular text-light-2 text-center mt-2">
               Don't have an account?
-              <Link to="/signup" className="text-primary-500 text-small-semibold ml-1">Sign Up</Link>
+              <Link to="/signup" className="text-primary-500 text-small ml-1">Sign Up</Link>
             </p>
           </form>
         </div>

@@ -21,7 +21,7 @@ const Topbar = () => {
         <section className='topbar'>
             <div className='flex-between py-4 px-5'>
                 <Link to="/" className='flex gap-3 items-center'>
-                    <h2 className='h1-bold md:h3-bold small:h4-bold'>TrendVibe</h2>
+                    <h3 className='h3-bold md:h3-bold small:h4-bold'>TrendVibe</h3>
                     {/* <img 
                     src='/assets/images/logo.svg'
                     alt='logo'
