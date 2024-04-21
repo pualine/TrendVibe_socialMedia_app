@@ -44,8 +44,8 @@ const SignupForm = () => {
 
 
   // Define a submit handler.
-  async function onSubmit(values: z.infer<typeof SignupFormValidation>) {
-    const newUser = await createUserAccount(values);
+  async function onSubmit(user: z.infer<typeof SignupFormValidation>) {
+    const newUser = await createUserAccount(user);
 
     if (!newUser) {
       return toast({
@@ -54,8 +54,8 @@ const SignupForm = () => {
     }
 
     const session = await signInAccount({
-      email: values.email,
-      password: values.password,
+      email: user.email,
+      password: user.password,
     })
     if (!session) {
       return toast({

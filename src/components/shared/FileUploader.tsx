@@ -22,6 +22,7 @@ const FileUploader = ({fieldChange, mediaUrl} : FileUploaderProps) => {
     setFileUrl(URL.createObjectURL(acceptedFiles[0]));
   }, [files])
 
+  
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: {

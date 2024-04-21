@@ -64,7 +64,7 @@ const SigninForm  = () => {
           {/* <img src="/assets/images/logo.svg" className="mx-auto" alt="Logo" /> */}
           <h2 className="h3-bold md:h3-bold">TrendVibe</h2>
 
-          <h2 className="h3-bold md:h2-bold pt-5 sm:pt-12 ">Login to your account</h2>
+          <h2 className="h3-bold md:h2-bold pt-5 sm:pt-12 ">Login</h2>
           <p className="text-light-3 small-medium md:base-regular">Welcome back!. Please enter your details</p>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 w-full mt-4">
             <FormField
