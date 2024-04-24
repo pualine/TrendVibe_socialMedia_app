@@ -17,12 +17,12 @@ import { useUserContext } from "@/context/AuthContext"
 const SignupForm = () => {
   const { toast } = useToast()
   const navigate = useNavigate();
-  const { checkAuthUser, isLoading: isUserLoading } = useUserContext()
+  const { checkAuthUser } = useUserContext()
 
   // Define a mutation.
   const { mutateAsync: createUserAccount, isPending: isCreatingUserAccount } = useCreateUserAccount();
 
-  const { mutateAsync: signInAccount, isPending: isSignIn } = useSignInAccount();
+  const { mutateAsync: signInAccount } = useSignInAccount();
 
 
 

@@ -2,28 +2,30 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "../ui/textarea"
 import FileUploader from "../shared/FileUploader"
 import { postFormValidation } from "@/lib/validation"
 import { Models } from "appwrite"
 import { useUserContext } from "@/context/AuthContext"
-import { toast, useToast } from "../ui/use-toast"
+import { useToast } from "../ui/use-toast"
 import { useNavigate } from "react-router-dom"
-import { useCreatePost } from "@/lib/react-query/queriesAndMutations"
-import Loader from "../shared/Loader"
+import { useCreatePost, useUpdatePost } from "@/lib/react-query/queriesAndMutations"
 
 
 type PostFormProps = {
     post?: Models.Document;
+    action: 'Create' | 'Update'
 }
 
-const PostForm = ({ post }: PostFormProps) => {
-const {mutateAsync: createPost, isPending: isLoadingCreate} = useCreatePost();
-const {user} = useUserContext();
-const {toast} = useToast();
-const navigate = useNavigate();
+const PostForm = ({ post, action }: PostFormProps) => {
+    const { mutateAsync: createPost, isPending: isLoadingCreate } = useCreatePost();
+    const { mutateAsync: updatePost, isPending: isLoadingUpdate } = useUpdatePost();
+
+    const { user } = useUserContext();
+    const { toast } = useToast();
+    const navigate = useNavigate();
 
     // 1. Define your form.
     const form = useForm<z.infer<typeof postFormValidation>>({
@@ -32,24 +34,39 @@ const navigate = useNavigate();
             caption: post ? post?.caption : "",
             file: [],
             location: post ? post?.location : "",
-            tags: post? post?.tags.join(","): "" 
+            tags: post ? post?.tags.join(",") : ""
         },
     })
 
     // 2. Define a submit handler.
     async function onSubmit(values: z.infer<typeof postFormValidation>) {
-       const newPost = await createPost({
-        ...values, 
-        userId: user.id,
+        if (post && action === 'Update') {
+            const updatedPost = await updatePost({
+                ...values,
+                postId: post.$id,
+                imageId: post?.imageId,
+                imageUrl: post?.imageUrl,
 
-       })
-       if(!newPost){
-        toast({
-            title: 'Please try again' 
+            })
+            if (!updatedPost) {
+                toast({ title: 'Please try again' })
+            }
+            return navigate(`/posts/${post.$id}`);
+
+        }
+        const newPost = await createPost({
+            ...values,
+            userId: user.id,
         })
-       }
-       navigate('/');
+
+        if (!newPost) {
+            toast({
+                title: 'Please try again'
+            })
+        }
+        navigate('/');
     }
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-9 w-full max-w-5xl">
@@ -88,9 +105,9 @@ const navigate = useNavigate();
                     name="location"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel className="shad-form_label">Add Location<span className="text-light-4">(optional )</span></FormLabel>
+                            <FormLabel className="shad-form_label">Add Location<span className="text-light-4">(Country )</span></FormLabel>
                             <FormControl>
-                                <Input type="text" className="shad-input" {...field}/>
+                                <Input type="text" className="shad-input" {...field} />
                             </FormControl>
                             <FormMessage className="shad-form_message" />
                         </FormItem>
@@ -106,7 +123,7 @@ const navigate = useNavigate();
                                 <Input type="text"
                                     className="shad-input"
                                     placeholder="social, entertainment, tech, expression "
-                                {...field}/>
+                                    {...field} />
                             </FormControl>
                             <FormMessage className="shad-form_message" />
                         </FormItem>
@@ -115,18 +132,16 @@ const navigate = useNavigate();
                 <div className="flex gap-4 items-center justify-end">
                     <Button type="button"
                         className="shad-button_dark_4">Cancel</Button>
-                    <Button type="submit" className=" shad-button_primary whitespace-nowrap">
-                        {isLoadingCreate && !createPost? (
-                            <Loader/>
-                        ) : (
-                            <ul>
-
-                            </ul>
-                        )}Post Now</Button>
+                    <Button type="submit" 
+                    className=" shad-button_primary whitespace-nowrap"
+                    disabled={isLoadingCreate || isLoadingUpdate}>
+                        {isLoadingCreate || isLoadingUpdate && '...'}
+                        {action} Post 
+                        </Button>
                 </div>
             </form>
         </Form>
     )
 }
 
-export default PostForm
+export default PostForm;
