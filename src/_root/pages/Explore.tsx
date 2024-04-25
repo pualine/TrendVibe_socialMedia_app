@@ -3,25 +3,34 @@ import Loader from "@/components/shared/Loader";
 import SearchResult from "@/components/shared/SearchResult";
 import useDebounce from "@/hooks/useDebounce";
 import { useGetPosts, useSearchPosts } from "@/lib/react-query/queriesAndMutations";
-import { useIsFetching } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useInView } from "react-intersection-observer";
 
 
 const Explore = () => {
+  const { ref, inView } = useInView();
   const { data: posts, fetchNextPage, hasNextPage } = useGetPosts();
 
   const [searchValue, setSearchValue] = useState('');
-  const deBounceValue = useDebounce(searchValue, 500)
-  const { data: searchedPosts, isFetching: isFectingSearch } = useSearchPosts(deBounceValue)
+  const deBounceValue = useDebounce(searchValue, 500);
+  const { data: searchedPosts, isFetching: isFectingSearch } = useSearchPosts(deBounceValue);
 
- if(!posts) {
-  return (<div className="flex-center w-full h-full">
-    <Loader/>
-  </div>)
- }
+  useEffect(() => {
+    if (inView && !searchValue) {
+      fetchNextPage();
+    }
+  }, [inView, searchValue]);
+
+  if (!posts) {
+    return (<div className="flex-center w-full h-full">
+      <Loader />
+    </div>
+    );
+  }
 
   const showSearchResult = searchValue !== '';
-  const showPost = !showSearchResult && posts.pages.every((item) => item.documents.length === 0);
+  const showPost = !showSearchResult &&
+    posts.pages.every((item) => item.documents.length === 0);
 
 
 
@@ -40,7 +49,7 @@ const Explore = () => {
             <input
               type="text"
               placeholder="Search"
-              className="explore-search"
+              className="explore-search focus-none"    //will come back to fix this ***focus
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
             />
@@ -62,17 +71,23 @@ const Explore = () => {
         <div className="flex flex-wrap gap-9 w-full max-w-5xl">
           {showSearchResult ? (
             <SearchResult
-            isSearchFetching={isFectingSearch}
-            searchedPosts={searchedPosts} />
+              isFectingSearch={isFectingSearch}
+              searchedPosts={searchedPosts} />
           ) : showPost ? (
             <p className="text-light-4 mt-10 text-center w-full">End of post</p>
           ) : posts.pages.map((item, index) => (
-            <GridPostList key={`page-$(index)`} posts={item.documents} />
+            <GridPostList key={`page-${index}`} posts={item.documents} />
           ))}
         </div>
+
+        {hasNextPage && !searchValue && (
+          <div ref={ref} className="mt-10">
+            <Loader />
+          </div>
+        )}
       </div>
     </>
   )
 }
 
-export default Explore
+export default Explore;
