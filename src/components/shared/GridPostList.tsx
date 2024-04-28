@@ -8,10 +8,10 @@ import PostStats from "../PostStats";
 type GridPostListProps = {
   posts: Models.Document[];
   showUser?: boolean;
-  showStarts?: boolean;
+  showStats?: boolean;
 }
 
-const GridPostList = ({ posts, showUser = true, showStarts = true }: GridPostListProps) => {
+const GridPostList = ({ posts, showUser = true, showStats = true }: GridPostListProps) => {
   const { user } = useUserContext();
   return (
     <>
@@ -36,7 +36,7 @@ const GridPostList = ({ posts, showUser = true, showStarts = true }: GridPostLis
                   <p className="line-clamp-1">{post.creator.name}</p>
                 </div>
               )}
-              {showStarts && <PostStats post={post} userId={user.id}/>}
+              {showStats && <PostStats post={post} userId={user.id}/>}
             </div>
           </li>
         ))}
@@ -46,4 +46,4 @@ const GridPostList = ({ posts, showUser = true, showStarts = true }: GridPostLis
   )
 }
 
-export default GridPostList
+export default GridPostList;

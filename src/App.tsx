@@ -6,13 +6,15 @@ import SignupForm from "./_auth/forms/SignupForm";
 import AuthLayout from "./_auth/AuthLayout";
 import RootLayout from "./_root/RootLayout";
 import { Toaster } from "@/components/ui/toaster"
-import {  Explore, Saved, AllUsers, LikedPosts,UpdateProfile, Profile, EditPost, PostDetails, CreatePost} from "./_root/pages";
+import { Explore, Saved, AllUsers, LikedPosts, UpdateProfile, Profile, EditPost, PostDetails, CreatePost } from "./_root/pages";
+
 
 
 
 
 const App = () => {
     return (
+        <>  
         <main className="flex h-screen">
             {/* public routes */}
             <Routes>
@@ -33,12 +35,13 @@ const App = () => {
                     <Route path="/posts/:id" element={<PostDetails />} />
                     <Route path="/profile/:id/*" element={<Profile />} />
                     <Route path="/update-profile/:id" element={<UpdateProfile />} />
-                    <Route path="/liked-post" element={<LikedPosts/>} />
+                    <Route path="/liked-post" element={<LikedPosts />} />
                 </Route>
 
             </Routes>
             <Toaster />
         </main>
+        </>
     )
 }
 

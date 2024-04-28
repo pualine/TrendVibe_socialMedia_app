@@ -27,7 +27,7 @@ const Home = () => {
     <div className='flex flex-1'>
       <div className='home-container'>
         <div className='home-posts'>
-          <h2 className='h3-bold md:h2-bold text-left w-full mb-20'>
+          <h2 className='h3-bold md:h2-bold text-left w-full mb-20 text-light-3'>
             Home Feed
           </h2>
           {isPostLoading && !posts ? (
@@ -44,7 +44,7 @@ const Home = () => {
 
       {/* creators */}
       <div className="home-creators">
-        <h3 className="h3-bold text-light-1">Top Creators</h3>
+        <h3 className="semibold text-light-3">People you may know</h3>
         {isUserLoading && !creators ? (
           <Loader />
         ) : (

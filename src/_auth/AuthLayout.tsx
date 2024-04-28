@@ -6,9 +6,10 @@ const AuthLayout = () => {
   return (
     <>
           <img 
-          src="/assets/gifs/J4o.gif" 
+          src="/assets/icons/login.svg" 
           alt="logo"
-          className="hidden xl:block  h-full w-1/2 object-cover bg-no-repeat" 
+          className="hidden xl:block ml-4 mt-20 py-10 ps-20 px-5 h-auto  object-cover bg-no-repeat"
+          style={{ position: "relative" }} 
           />
       {isAuthenticated ? (
         <Navigate to="/" />

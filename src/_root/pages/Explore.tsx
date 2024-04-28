@@ -49,7 +49,7 @@ const Explore = () => {
             <input
               type="text"
               placeholder="Search"
-              className="explore-search focus-none"    //will come back to fix this ***focus
+              className="explore-search"    //will come back to fix this ***focus
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
             />
